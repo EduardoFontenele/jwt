@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -25,6 +24,6 @@ public class ApiUserDetailsService implements UserDetailsService {
         Optional<UserEntity> foundUser = userRepository.findByUsername(username);
 
         return foundUser.map(UserSecurity::new)
-                .orElseThrow(() -> new NoSuchElementException("User not found or not present"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found or not present"));
     }
 }
