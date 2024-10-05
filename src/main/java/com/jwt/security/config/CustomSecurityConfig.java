@@ -1,6 +1,6 @@
-package com.jwt.controller.security.config;
+package com.jwt.security.config;
 
-import com.jwt.controller.security.filter.CustomSecurityFilter;
+import com.jwt.security.filter.CustomSecurityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

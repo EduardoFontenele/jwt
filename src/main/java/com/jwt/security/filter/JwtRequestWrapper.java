@@ -1,4 +1,4 @@
-package com.jwt.controller.security.filter;
+package com.jwt.security.filter;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
