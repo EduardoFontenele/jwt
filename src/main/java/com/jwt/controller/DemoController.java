@@ -1,5 +1,6 @@
 package com.jwt.controller;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +11,6 @@ public class DemoController {
 
     @GetMapping
     public String demo() {
-        return "Hello from demo controller";
+        return "Hello, " + SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

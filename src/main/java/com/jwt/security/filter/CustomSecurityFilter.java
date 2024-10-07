@@ -7,14 +7,18 @@ import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @Service
@@ -52,12 +56,18 @@ public class CustomSecurityFilter extends OncePerRequestFilter {
                     .build()
                     .parseSignedClaims(charSequence);
 
-            log.info(jwt.getPayload().toString());
+            Claims claims = jwt.getPayload();
+            String username = claims.getSubject();
+            log.info(username);
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>()));
+            }
 
         } catch (JwtException e) {
-            throw new JwtException(e.getMessage());
+            filterChain.doFilter(request, response);
+            return;
         }
-
 
         filterChain.doFilter(request, response);
     }
