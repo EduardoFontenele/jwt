@@ -1,7 +1,7 @@
 package com.jwt.security.controller;
 
-import com.jwt.security.model.RegisterUserRequest;
-import com.jwt.security.model.RegisterUserResponse;
+import com.jwt.security.model.UserRequestDTO;
+import com.jwt.security.model.UserResponseDTO;
 import com.jwt.security.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,12 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterUserResponse> register(@RequestBody RegisterUserRequest user) {
+    public ResponseEntity<UserResponseDTO> register(@RequestBody UserRequestDTO user) {
         return ResponseEntity.ok(authenticationService.register(user));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDTO> login(@RequestBody UserRequestDTO user) {
+        return ResponseEntity.ok(authenticationService.login(user));
     }
 }
