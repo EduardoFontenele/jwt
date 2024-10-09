@@ -25,14 +25,8 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     public UserResponseDTO register(UserRequestDTO user) {
-        if (userRepository.findByUsername(user.username()).isPresent()) {
-            throw new AuthenticationException("User already exists") {
-                @Override
-                public String getMessage() {
-                    return super.getMessage();
-                }
-            };
-        }
+        if (userRepository.findByUsername(user.username()).isPresent())
+            throw new BadCredentialsException("User already exists");
 
         UserEntity userEntity = UserEntity.builder()
                 .username(user.username())
@@ -46,7 +40,8 @@ public class AuthenticationService {
 
     public UserResponseDTO login(UserRequestDTO user) {
         UserDetails userSecurityDTO = customUserDetailsService.loadUserByUsername(user.username());
-        if (!passwordEncoder.matches(user.password(), userSecurityDTO.getPassword())) throw new BadCredentialsException("Password is wrong");
+        if (!passwordEncoder.matches(user.password(), userSecurityDTO.getPassword()))
+            throw new BadCredentialsException("Password is wrong");
         return new UserResponseDTO(userSecurityDTO.getUsername(), jwtService.generateToken(userSecurityDTO.getUsername()));
     }
 

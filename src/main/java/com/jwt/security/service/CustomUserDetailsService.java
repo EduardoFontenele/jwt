@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserEntity> userOptional = userRepository.findByUsername(username);
-        return userOptional.map(UserSecurityDTO::new)
+        return userOptional.map(UserSecurityDTO::new) // (userEntity -> new UserSecurityDTO(userEntity))
                 .orElseThrow(() -> new BadCredentialsException("User not present"));
     }
 }
