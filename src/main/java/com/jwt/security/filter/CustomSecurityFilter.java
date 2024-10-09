@@ -1,5 +1,6 @@
 package com.jwt.security.filter;
 
+import com.jwt.security.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.JwtException;
@@ -33,17 +34,11 @@ public class CustomSecurityFilter extends OncePerRequestFilter {
         final String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader == null || authorizationHeader.isBlank()) {
-            log.info("JWT not present - URL: {}, Method: {}, IP: {}, User-Agent: {}",
-                    request.getRequestURI(), request.getMethod(),
-                    request.getRemoteAddr(), request.getHeader("User-Agent"));
             filterChain.doFilter(request, response);
             return;
         }
 
         if (!authorizationHeader.startsWith("Bearer ")) {
-            log.info("Invalid JWT - URL: {}, Method: {}, IP: {}, User-Agent: {}",
-                    request.getRequestURI(), request.getMethod(),
-                    request.getRemoteAddr(), request.getHeader("User-Agent"));
             filterChain.doFilter(request, response);
             return;
         }
@@ -52,19 +47,19 @@ public class CustomSecurityFilter extends OncePerRequestFilter {
 
         try {
             Jwt<?, Claims> jwt = Jwts.parser()
-                    .verifyWith(JwtRequestWrapper.secretKey)
+                    .verifyWith(JwtService.secretKey)
                     .build()
                     .parseSignedClaims(charSequence);
 
             Claims claims = jwt.getPayload();
             String username = claims.getSubject();
-            log.info(username);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>()));
             }
 
         } catch (JwtException e) {
+            log.error(e.getMessage());
             filterChain.doFilter(request, response);
             return;
         }
